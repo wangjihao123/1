@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 
 # Create your views here.
@@ -8,8 +9,8 @@ def home(request):
 
 
 def upload(request):
-    print(request.POST)
-    file_name = request.POST['name']
+    # print(request.POST)
+    file_name = os.path.join('cache', request.POST['name'])
     file = request.FILES['file']
 
     with open(file_name, 'wb') as f:
