@@ -1,0 +1,188 @@
+{#{% load static %}#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>recorder.js</title>
+    <style>
+        audio {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #audio-container {
+            padding: 20px 0;
+        }
+
+        .ui-btn {
+            display: inline-block;
+            padding: 5px 20px;
+            font-size: 14px;
+            line-height: 1.428571429;
+            box-sizing: content-box;
+            text-align: center;
+            border: 1px solid #e8e8e8;
+            border-radius: 3px;
+            color: #555;
+            background-color: #fff;
+            border-color: #e8e8e8;
+            white-space: nowrap;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .ui-btn:hover, .ui-btn.hover {
+            color: #333;
+            text-decoration: none;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+
+        .ui-btn:focus, .ui-btn:active {
+            color: #333;
+            outline: 0;
+        }
+
+        .ui-btn.disabled, .ui-btn.disabled:hover, .ui-btn.disabled:active, .ui-btn[disabled], .ui-btn[disabled]:hover, .ui-state-disabled .ui-btn {
+            cursor: not-allowed;
+            background-color: #eee;
+            border-color: #eee;
+            color: #aaa;
+        }
+
+        .ui-btn-primary {
+            color: #fff;
+            background-color: #39b54a;
+            border-color: #39b54a;
+        }
+
+        .ui-btn-primary:hover, .ui-btn-primary.hover {
+            color: #fff;
+            background-color: #16a329;
+            border-color: #16a329;
+        }
+
+        .ui-btn-primary:focus, .ui-btn-primary:active {
+            color: #fff;
+        }
+
+        .ui-btn-primary.disabled:focus {
+            color: #aaa;
+        }
+    </style>
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script src="http://cdn.bootcss.com/blueimp-md5/1.1.0/js/md5.js"></script>
+    <script src="/static/js/recorder.js"></script>
+</head>
+<body>
+<iframe frameborder="0" scrolling="0" width="91px" height="20px"
+        src="https://ghbtns.com/github-btn.html?user=wangpengfei15975&repo=recorder.js&type=star&count=true"></iframe>
+<h1>recorder.js</h1>
+<h2>HTML5录音解决方案</h2>
+<p>由于Chrome47以上以及QQ浏览器需要HTTPS的支持，所以烦请更换至360、FF、Edge进行体验，或下载项目至本地通过localhost访问。</p>
+<p>另：IE和Safari全版本不支持录音功能</p>
+<hr>
+<div align="center"><img src="static/wq.jpeg" alt=""><br>
+    <p id="status_str">准备就绪</p>
+    <div id="content"></div>
+
+    <button id="start" class="ui-btn ui-btn-primary" disabled>录音</button>
+    <button id="stop" class="ui-btn ui-btn-primary" disabled>停止</button>
+
+</div>
+<audio id="play_audio" src="/static/audio_file/auido.mp3" autoplay="autoplay">
+    Your browser does not support the audio element.
+</audio>
+
+<script>
+    var now_time = new Date().toString();
+    var user_id = md5(now_time);
+    var status_str = document.getElementById("status_str");
+
+    window.onload = function () {
+        var start = document.querySelector('#start');
+        var stop = document.querySelector('#stop');
+
+        var recorder = new Recorder({
+            sampleRate: 44100, //采样频率，默认为44100Hz(标准MP3采样率)
+            bitRate: 128, //比特率，默认为128kbps(标准MP3质量)
+            success: function () { //成功回调函数
+                start.disabled = false;
+            },
+            error: function (msg) { //失败回调函数
+                alert(msg);
+            },
+            fix: function (msg) { //不支持H5录音回调函数
+                alert(msg);
+            }
+        });
+
+        function play_anything(src_str) {
+            var a = document.getElementById("play_audio");
+            var content = document.getElementById("content");
+            if (src_str.play_type == "music") {
+                a.src = src_str.res_name
+                // 播放合成语音
+            } else {
+                a.src = "/static/audio_file/" + src_str.res_name;
+                //  显示额外信息
+                content.innerHTML = src_str.content
+            }
+        }
+
+        start.addEventListener('click', function () {
+            status_str.innerHTML = "正在聆听......";
+            this.disabled = true;
+            stop.disabled = false;
+            var audio = document.querySelectorAll('audio');
+            for (var i = 0; i < audio.length; i++) {
+                if (!audio[i].paused) {
+                    audio[i].pause();
+                }
+            }
+            recorder.start();
+        });
+        stop.addEventListener('click', function () {
+            status_str.innerText = "倾听结束......";
+            this.disabled = true;
+            start.disabled = false;
+            recorder.stop();
+            recorder.getBlob(function (blob) {
+                uploadToServer(blob)
+            });
+        });
+
+        function uploadToServer(blob) {
+            var fileType = 'mp3';
+            var fileName = new Date().valueOf() + '.' + fileType;
+            var url = 'http://127.0.0.1:8000/upload_audio/';
+
+            // create FormData
+            var formData = new FormData();
+            formData.append("name", fileName);
+            formData.append("user_id", user_id)
+            formData.append("file", blob);
+            $.ajax(
+                {
+                    method: "POST",
+                    url: url,
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,  // 不处理数据
+                    contentType: false,  // 不设置内容类型
+                    success: function (res_data) {
+                        console.log(res_data)
+                        status_str.innerText = "正在诉说......";
+
+                        play_anything(res_data);
+                    }
+                }
+            )
+        }
+    };
+</script>
+</body>
+</html>
