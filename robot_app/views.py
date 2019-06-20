@@ -5,3 +5,14 @@ from django.shortcuts import render
 
 def home(request):
     return render(request, 'robot_app/index.html')
+
+
+def upload(request):
+    print(request.POST)
+    file_name = request.POST['name']
+    file = request.FILES['file']
+
+    with open(file_name, 'wb') as f:
+        f.write(file.read())
+
+    return render(request, 'robot_app/index.html')
