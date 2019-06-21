@@ -1,5 +1,6 @@
 import os
 from aip import AipSpeech
+from config.config import role_param
 
 APP_ID = '16574945'
 API_KEY = 'vOCGnszOkAzSrPa9iMkxlyIS'
@@ -8,15 +9,7 @@ SECRET_KEY = 'LFGP5AmRQyCDDO1A8pMoZUwlqtHb8r0a'
 client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)
 
 
-# 角色参数
-role_param = {
-        'vol': 5,
-        'per': '4',
-        'pit': '5'
-    }
-
-
-def text2audio(worlds, role_param, out_putfile, lang='zh'):
+def text2audio(worlds, out_putfile, lang='zh'):
     """
     :param worlds: 待合成文本信息
     :param role_param: 角色参数

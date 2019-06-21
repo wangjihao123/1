@@ -123,7 +123,7 @@
                 a.src = src_str.res_name
                 // 播放合成语音
             } else {
-                a.src = "/static/audio_file/" + src_str.res_name;
+                a.src = src_str.res_name;
                 //  显示额外信息
                 content.innerHTML = src_str.content
             }
@@ -172,7 +172,6 @@
                     success: function (res_data) {
                         console.log(res_data)
                         status_str.innerText = "正在诉说......";
-
                         play_anything(res_data);
                     }
                 }
