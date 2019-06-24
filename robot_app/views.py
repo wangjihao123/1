@@ -3,6 +3,7 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from function.baidu_ai import audio2text, text2audio
+from function.tuling import get_roboot_answer
 
 # Create your views here.
 
@@ -20,9 +21,11 @@ def upload(request):
         f.write(file.read())
 
     text = audio2text(file_name)
+    answer = get_roboot_answer(text)
+
     hecheng_name = os.path.join('robot_app', 'static', 'audio_file', 'hecheng' + request.POST['name'])
 
-    if text2audio(text, hecheng_name):
+    if text2audio(answer, hecheng_name):
         print('合成成功！')
         res_name = hecheng_name.strip('robot_app//')
     else:
