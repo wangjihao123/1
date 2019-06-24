@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from function.baidu_ai import audio2text, text2audio
 from function.tuling import get_roboot_answer
+from function.gensim_lsi import get_high_sim
+from function.database import read_answer
 
 # Create your views here.
 
@@ -21,7 +23,11 @@ def upload(request):
         f.write(file.read())
 
     text = audio2text(file_name)
-    answer = get_roboot_answer(text)
+    index = get_high_sim(text)
+    if index is not None:
+        answer = read_answer(index)
+    else:
+        answer = get_roboot_answer(text)
 
     hecheng_name = os.path.join('robot_app', 'static', 'audio_file', 'hecheng' + request.POST['name'])
 
