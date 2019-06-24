@@ -132,12 +132,7 @@
             status_str.innerHTML = "正在聆听......";
             this.disabled = true;
             stop.disabled = false;
-            var audio = document.querySelectorAll('audio');
-            for (var i = 0; i < audio.length; i++) {
-                if (!audio[i].paused) {
-                    audio[i].pause();
-                }
-            }
+
             recorder.start();
         });
         stop.addEventListener('click', function () {
