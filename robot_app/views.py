@@ -41,7 +41,7 @@ def upload(request):
     res_str = {
         'play_tpe': 'talk',
         'res_name': res_name,
-        'content': text
+        'content': answer
     }
 
     return HttpResponse(json.dumps(res_str), content_type='application/json')

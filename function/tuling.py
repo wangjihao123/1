@@ -27,7 +27,7 @@ def get_roboot_answer(info):
     }
     try:
         response = requests.post(url, data=json.dumps(data))
-        answer = response.json()['result'][0]['values']['text']
+        answer = response.json()['results'][0]['values']['text']
     except Exception as e:
         print(e)
         answer = '网络异常！'
