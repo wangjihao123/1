@@ -86,8 +86,18 @@
 
     <button id="start" class="ui-btn ui-btn-primary" disabled>录音</button>
     <button id="stop" class="ui-btn ui-btn-primary" disabled>停止</button>
+    <br>
+    <table>
+        {% for key,value in 历史记录.items %}
+        <tr>
+            <td>You say:{{ key }}</td>
+            <td>I say:{{ value }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 
 </div>
+<embed src="/static/audio_file/auido.mp3" hidden="true" autostart="true" loop="false">
 <audio id="play_audio" src="/static/audio_file/auido.mp3" autoplay="autoplay">
     Your browser does not support the audio element.
 </audio>
@@ -100,7 +110,6 @@
     window.onload = function () {
         var start = document.querySelector('#start');
         var stop = document.querySelector('#stop');
-
         var recorder = new Recorder({
             sampleRate: 44100, //采样频率，默认为44100Hz(标准MP3采样率)
             bitRate: 128, //比特率，默认为128kbps(标准MP3质量)
@@ -119,13 +128,15 @@
             var a = document.getElementById("play_audio");
             var content = document.getElementById("content");
             if (src_str.play_type == "music") {
-                a.src = src_str.res_name
+                a.src = src_str.res_name;
+
                 // 播放合成语音
             } else {
                 a.src = src_str.res_name;
                 //  显示额外信息
                 content.innerHTML = src_str.content
             }
+
         }
 
         start.addEventListener('click', function () {
@@ -167,6 +178,7 @@
                         console.log(res_data)
                         status_str.innerText = "正在诉说......";
                         play_anything(res_data);
+
                     }
                 }
             )
