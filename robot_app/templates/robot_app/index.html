@@ -78,20 +78,20 @@
     <script src="/static/js/recorder.js"></script>
 </head>
 
-<body>
+<body background="../../static/dark_wood.png">
 
-<div align="center"><img src="static/wq.jpeg" alt=""><br>
-    <p id="status_str">准备就绪</p>
-    <div id="content"></div>
+<div align="center"><img src="static/title.png" alt=""><br>
+    <p id="status_str" style="color: white">准备就绪</p>
+    <div id="content" style="color: white"></div>
 
     <button id="start" class="ui-btn ui-btn-primary" disabled>录音</button>
     <button id="stop" class="ui-btn ui-btn-primary" disabled>停止</button>
-    <br>
+    <br><br><br><br><br>
     <table>
         {% for key,value in 历史记录.items %}
         <tr>
-            <td>You say:{{ key }}</td>
-            <td>I say:{{ value }}</td>
+            <td style="color: white">Question:{{ key }}</td>
+            <td style="color: white">Answer:{{ value }}</td>
         </tr>
         {% endfor %}
     </table>
@@ -184,6 +184,7 @@
             )
         }
     };
+
 </script>
 </body>
 </html>
